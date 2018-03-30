@@ -1,0 +1,92 @@
+<style lang="less">
+@import "./less/common.less";
+// @import "./less/rese.less";
+</style>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>
+import wepy from 'wepy'
+import 'wepy-async-function'
+
+import { setStore } from 'wepy-redux'
+import configStore from './store'
+
+const store = configStore()
+setStore(store)
+
+export default class extends wepy.app {
+  config = {
+    pages: [
+      'pages/home/home',
+      'pages/my/my',
+      'pages/index',
+      'pages/login/login',
+      'pages/set/forget.pwd'
+    ],
+    window: {
+      backgroundTextStyle: 'light',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTitleText: '小程序测试吧',
+      navigationBarTextStyle: 'black'
+    },
+    'tabBar': {
+      'color': '#666666',
+      'selectedColor': '#1C1C1C',
+      'borderStyle': '#ffffff',
+      'backgroundColor': '#ffffff',
+      'list': [
+        {
+          'pagePath': 'pages/home/home',
+          'text': '首页',
+          'iconPath': 'image/icon/shouye2.png',
+          'selectedIconPath': 'image/icon/shouye1.png'
+        },
+        {
+          'pagePath': 'pages/my/my',
+          'text': '我的',
+          'iconPath': 'image/icon/wode2.png',
+          'selectedIconPath': 'image/icon/wode1.png'
+        }
+      ]
+    }
+  }
+
+  globalData = {
+    userInfo: null
+  }
+
+  constructor () {
+    super()
+    this.use('requestfix')
+  }
+
+  onLaunch() {
+    this.testAsync()
+  }
+
+  sleep (s) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('promise resolved')
+      }, s * 1000)
+    })
+  }
+
+  async testAsync () {
+    const data = await this.sleep(3)
+    console.log(data)
+  }
+
+  getUserInfo(cb) {
+    const that = this
+    if (this.globalData.userInfo) {
+      return this.globalData.userInfo
+    }
+    wepy.getUserInfo({
+      success (res) {
+        that.globalData.userInfo = res.userInfo
+        cb && cb(res.userInfo)
+      }
+    })
+  }
+}
+</script>

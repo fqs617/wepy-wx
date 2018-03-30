@@ -1,0 +1,233 @@
+<template>
+  <view class="container home">
+    <view class="top" >
+      <view class="d-name" wx:if="{{info.status === 20}}">
+        <text class="name">{{ info.communityName }}</text>
+        <text class="info">{{ info.position }}</text>
+      </view>
+      <text class="note" wx:if="{{info.status !== 20}}">请选择您入驻的小区，以方便我们为您提供服务</text>
+      <view class="button1" @tap="selectCity" wx:if="{{info.status !== 20}}">
+        入驻小区
+      </view>
+    </view>
+    <view class="mo">
+      <view class="li" @tap="goNotice">
+        <view class="image"><image src="../../image/index/notice.png"/></view>
+        <text class="title">通知公告</text>
+        <text class="info">停水停电通知</text>
+      </view>
+      <view class="li" @tap="goPay">
+        <view class="image"><image src="../../image/index/pay.png"/></view>
+        <text class="title">物业缴费</text>
+        <text class="info">微信支付在线缴费</text>
+      </view>
+      <view class="li" @tap="goRepair">
+        <view class="image"><image src="../../image/index/repair.png"/></view>
+        <text class="title">报事报修</text>
+        <text class="info">在线受理报事报修</text>
+      </view>
+      <view class="li" @tap="goAdvisory">
+        <view class="image"><image src="../../image/index/advisory.png"/></view>
+        <text class="title">在线咨询</text>
+        <text class="info">有什么话这里说</text>
+      </view>
+      <view class="li" @tap="goPhone">
+        <view class="image"><image src="../../image/index/phone.png"/></view>
+        <text class="title">物业电话</text>
+        <text class="info">一键拨通</text>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import HomeService from '@/service/home.service'
+
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: '倍全生活'
+    }
+    components = {
+      // 引用组件
+    }
+    data = {
+      info: {
+        status: 10,
+        communityName: '',
+        position: '',
+        contactNumber: ''
+      },
+      params: {
+        page: 1,
+        pageSize: 20,
+        type: 5
+      }
+    }
+    computed = {
+    }
+    async onLoad() {
+      this.homeService = new HomeService()
+      let res = await this.homeService.getCateList()
+      console.log(res)
+    }
+    methods = {
+      // 下拉刷新回调接口
+      onPullDownRefresh () {
+         // 我们用total和count来控制分页，total代表已请求数据的总数，count代表每次请求的个数。
+         // 刷新时需把total重置为0，代表重新从第一条请求。
+        let total = 0
+        console.log(11)
+        console.log(total)
+         // this.data.dataArray 是页面中绑定的数据源
+        // this.data.dataArray = []
+         // 网络请求，重新请求一遍数据
+        // this.periphery()
+         // 小程序提供的api，通知页面停止下拉刷新效果
+        wx.stopPullDownRefresh()
+      },
+      // 上拉加载回调接口
+      onReachBottom: function () {
+           // 我们用total和count来控制分页，total代表已请求数据的总数，count代表每次请求的个数。
+           // 上拉时需把total在原来的基础上加上count，代表从count条后的数据开始请求。
+        let count = 0
+        let total = 0
+        total += count
+        console.log(total)
+           // 网络请求
+        //  this.periphery()
+      },
+      selectCity () {
+        wx.navigateTo({
+          url: './house/city.select'
+        })
+      },
+      goNotice () {
+        wx.navigateTo({
+          url: '../notice/notice'
+        })
+      },
+      goPay () {
+        wx.navigateTo({
+          url: '../pay/pay'
+        })
+      },
+      goRepair () {
+        wx.navigateTo({
+          url: '../repair/repair'
+        })
+      },
+      goAdvisory () {
+        wx.navigateTo({
+          url: '../advisory/ad.index'
+        })
+      },
+      goPhone () {
+        wx.makePhoneCall({
+          phoneNumber: this.info.contactNumber
+        })
+      }
+    }
+  }
+</script>
+<style lang="less">
+.home{
+  .top{
+    height: 340rpx;
+    width: 100%;
+    background: url('http://p5baddul2.bkt.clouddn.com/back/back-home.png') no-repeat center;
+    background-size: cover;
+    padding-top: 80rpx;
+    .d-name{
+      // background: rgba(#fff, #fff, #fff, 0.9);
+      background: #fff;
+      opacity: 0.9;
+      width: 450rpx;
+      height: 150rpx;
+      margin: 0 auto;
+      text{
+        display: block;
+        text-align: center;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        word-break: break-all;
+        -webkit-box-pack: center;
+        white-space: normal;
+      }
+      .name{
+        font-size: 48rpx;
+        color: #000000;
+        line-height: 68rpx;
+        padding-top: 20rpx;
+      }
+      .info{
+        font-size: 30rpx;
+        color: #000000;
+        line-height: 50rpx;
+      }
+    }
+    .note{
+      display: block;
+      color: #333;
+      font-size: 30rpx;
+      text-align: center;
+      // padding-top: 80rpx;
+    }
+    .button1{
+      width: 400rpx;
+      height: 80rpx;
+      line-height: 80rpx;
+      font-size: 32rpx;
+      margin: 40rpx auto;
+      box-shadow: 0 4rpx 16rpx 0 rgba(0,0,0,0.20);
+      border-radius: 40rpx;
+      text-align: center;
+      background: #fff;
+    }
+  }
+  .mo{
+    .li{
+      width: 100%;
+      float: left;
+      padding-left: 120rpx;
+      position: relative;
+      height: 200rpx;
+      overflow: hidden;
+      border-bottom: 1rpx solid #e1e1e1;
+      &:nth-child(odd){
+        border-right: 1rpx solid #e1e1e1;
+      }
+      text{
+        display: block;
+      }
+      .image{
+        position: absolute;
+        width: 60rpx;
+        height: 60rpx;
+        top: 70rpx;
+        left: 30rpx;
+      }
+      image{
+        width: 60rpx;
+        height: 60rpx;
+      }
+      .title{
+        font-size: 32rpx;
+        color: #333333;
+        margin-top: 60rpx;
+        height: 32rpx;
+        line-height: 32rpx;
+        padding-bottom: 14rpx;
+      }
+      .info{
+        font-size: 28rpx;
+        color: #888;
+        height: 34rpx;
+        line-height: 34rpx;
+      }
+    }
+  }
+}
+</style>

@@ -1,0 +1,149 @@
+<template>
+  <view class="container login">
+    <view class="content">
+      <view class="li">
+        <view class="input"><input placeholder="请输入用户名/手机号/邮箱号" bindinput="changePhone"/></view>
+      </view>
+      <view class="li">
+        <input class="input" type="password" placeholder="请输入密码" bindinput="changePwd"/>
+      </view>
+  </view>
+  <view class="bq-btn-clear" @tap="goPhoneValidate">忘记密码</view>
+  <view class="bq-btn-clear register" @tap="goRegister">注册</view>
+    <view class="button" @tap="goLogin">登录</view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import LoginService from '@/service/login.service'
+
+  export default class Login extends wepy.page {
+    config = {
+      navigationBarTitleText: ''
+    }
+    components = {
+      // 引用组件
+    }
+    data = {
+      name: '',
+      password: ''
+    }
+    computed = {
+    }
+    async onLoad() {
+      this.LoginService = new LoginService()
+      let isLoggedIn = !wx.getStorageSync('uid') || !wx.getStorageSync('token')
+      if (!isLoggedIn) {
+        this.$router.replace('/')
+        return false
+      }
+    }
+    methods = {
+      changePhone (e) {
+        this.name = e.detail.value
+      },
+      changePwd (e) {
+        this.password = e.detail.value
+      },
+      async goLogin () {
+        if (!this.name) {
+          wx.showToast({ title: '请输入用户名', icon: 'none', duration: 3000 })
+          return
+        }
+        if (!this.password) {
+          wx.showToast({ title: '请输入密码', icon: 'none', duration: 3000 })
+          return
+        }
+        let params = {
+          password: this.password,
+          name: this.name
+        }
+        let res = await this.LoginService.doLogin(params)
+        wx.showToast({ title: '登陆成功', icon: 'succeed', duration: 3000 })
+        wx.setStorageSync('userInfo', res)
+        wx.switchTab({url: '/pages/home/home'})
+        this.$apply()
+      }
+    }
+  }
+</script>
+<style lang="less">
+.login{
+  .button{
+    margin-top: 100rpx;
+  }
+  .content{
+    width: 100%;
+    margin-top: 20rpx;
+    border-top: 1rpx solid #ccc;
+    border-bottom: 1rpx solid #ccc;
+    padding: 0 10rpx;
+    background: #fff;
+    .li{
+      height: 90rpx;
+      border-bottom: 1rpx solid #ccc;
+      position: relative;
+      // padding: 25rpx 0;
+      line-height: 40rpx;
+      input{
+        width: 100%;
+        height: 40rpx;
+        line-height: 40rpx;
+      }
+      &:last-child{
+        border-bottom: none;
+      }
+      .text{
+        position: absolute;
+        left: 0;
+        top: 25rpx;
+        font-size: 30rpx;
+        color: #CCCCCC;
+      }
+      .input{
+        width: 100%;
+        position: absolute;
+        left: 50rpx;
+        top: 25rpx;
+        font-size: 30rpx;
+        color: #222;
+      }
+      .code{
+        width: 200rpx;
+        height: 100%;
+        position: absolute;
+        top: 0rpx;
+        color: #222;
+        right: 28rpx;
+        text-align: center;
+        border-radius: 0;
+      }
+      .btn{
+        position: absolute;
+        top: 0rpx;
+        right: 10rpx;
+        width: 200rpx;
+        height: 100%;
+        background: #FFDE3B;
+        outline: none;
+        border: none;
+        border-radius: 0;
+        font-size: 28rpx;
+        line-height: 100rpx;
+        text-align: center;
+      }
+    }
+  }
+  .bq-btn-clear {
+    font-size: 12px;
+    line-height: 12px;
+    float: right;
+    margin: 20rpx 20rpx 25rpx 0;
+    border: none;
+    cursor: pointer;
+  }
+  .register{
+  margin-right: 15px;
+  }
+}
+</style>

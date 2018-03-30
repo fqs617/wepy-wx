@@ -1,0 +1,50 @@
+.display-flex {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-direction: normal;
+    -webkit-box-orient: horizontal;
+    -webkit-flex-direction: horizontal;
+    -moz-flex-direction: horizontal;
+    -ms-flex-direction: horizontal;
+    flex-direction: horizontal;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    -moz-justify-content: center;
+    justify-content: center;
+}
+.flex(@f) {
+    -webkit-box-flex: @f;
+    -webkit-flex: @f;
+    -moz-box-flex: @f;
+    -moz-flex: @f;
+    -ms-flex: @f;
+    flex: @f;
+}
+.text-overflow(@t) {
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: @t;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-all;
+    -webkit-box-pack: center;
+    white-space: normal;
+}
+.text-overflow-1{
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+}
+.transform(@t){
+  transform: rotate(@t);
+  -o-transform: rotate(@t);
+  -webkit-transform: rotate(@t);
+  -moz-transform: rotate(@t);
+}
