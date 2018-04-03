@@ -8,11 +8,20 @@ export default class homeService {
    * @returns
    * @memberof GoodService
    */
-  getCateList(params) {
-    if (this.cancelCateList) {
-      this.cancelCateList()
-      this.cancelCateList = null
-    }
+  getGoodList(params) {
     return get('buyer/goods/list', params)
+  }
+  /**
+   *
+   * 获取商品详情页数据
+   * @param {any} params.uid 买家ID [必须]
+   * @param {any} params.sku 商品id [必须]
+   * @param {any} params.client 微信：10 PC：20 APP：30（数字类型）
+   * @returns
+   * @memberof GoodService
+   */
+  getDetail(params, config = {}) {
+    params.client = 10
+    return get('buyer/goods/detail', params, config)
   }
 }

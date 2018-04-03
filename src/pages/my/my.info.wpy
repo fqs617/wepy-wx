@@ -1,0 +1,175 @@
+<template>
+  <view class="container user-submit">
+    <view class="address">
+      {{ address }}
+    </view>
+    <view class="submit">
+      <view class="info border" @tap="selectType">
+        <text>住户类型</text>
+        <input placeholder="选择住户类型" value="{{ authorityName }}" disabled/>
+        <!-- <view class="next-right"></view> -->
+      </view>
+      <view class="info border">
+        <text>姓名</text>
+        <input placeholder="您的真实姓名" bindinput="changeInput"/>
+      </view>
+      <view class="info">
+        <text>电话</text>
+        <!-- <text class="input">您的电话</text> -->
+        <input placeholder="您的电话" value="{{ phone }}" disabled/>
+      </view>
+    </view>
+    <view class="note">
+      提示：物业会进行审核，审核不通过无法享受服务
+    </view>
+    <view class="button" @tap="save">
+      提交身份认证
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import HomeService from '@/service/home.service'
+  export default class UserSubmit extends wepy.page {
+    config = {
+      navigationBarTitleText: '个人资料提交'
+    }
+    components = {
+      // 引用组件
+    }
+    data = {
+      informationId: '',
+      communityId: '',
+      phone: '',
+      authorityType: 0,
+      authorityName: '',
+      name: '',
+      address: ''
+    }
+    computed = {
+    }
+    methods = {
+      selectType () {
+        let self = this
+        wx.showActionSheet({
+          itemList: ['业主', '租户', '家属'],
+          success: function(res) {
+            if (res.tapIndex === 0) {
+              self.authorityType = 10
+              self.authorityName = '业主'
+            } else if (res.tapIndex === 1) {
+              self.authorityType = 20
+              self.authorityName = '租户'
+            } else if (res.tapIndex === 2) {
+              self.authorityType = 30
+              self.authorityName = '家属'
+            }
+            self.$apply()
+          }
+        })
+      },
+      changeInput (e) {
+        this.name = e.detail.value
+      },
+      async save () {
+        let param = {
+          communityId: this.communityId,
+          informationId: this.informationId,
+          authorityType: this.authorityType,
+          authorityUserPhone: this.phone,
+          authorityUserName: this.name
+        }
+        // let user = wx.getStorageSync('userHouseInfo')
+        // param.authorityUserPhone = user.
+        if (!param.authorityType) {
+          wx.showToast({ title: '请选择住户类型', icon: 'none', duration: 3000 })
+          return
+        }
+        if (!param.authorityUserName) {
+          wx.showToast({ title: '请输入住户姓名', icon: 'none', duration: 3000 })
+          return
+        }
+        let res = await this.HomeService.authoritySave(param)
+        wx.navigateTo({
+          url: './result?id=' + res.authorityId
+        })
+      }
+    }
+    onLoad (options) {
+      console.log(options)
+      this.HomeService = new HomeService()
+      this.communityId = options.communityId
+      this.informationId = options.informationId
+      let user = wx.getStorageSync('userHouseInfo')
+      this.phone = user.phone
+      let address = wx.getStorageSync('selectAddress')
+      this.address = address.cityName + address.districtName + address.house
+      this.$apply()
+    }
+  }
+</script>
+<style lang="less">
+.user-submit{
+  height: 100%;
+  // padding: 0 30rpx;
+  .address{
+    width: 100%;
+    line-height: 30rpx;
+    font-size: 30rpx;
+    color: #333;
+    line-height: 36rpx;
+    padding: 40rpx 30rpx;
+  }
+  .note{
+    font-size: 24rpx;
+    color: #999999;
+    line-height: 26rpx;
+    padding: 20rpx 30rpx;
+  }
+  .submit{
+    width: 100%;
+    border-top: 1rpx solid #ccc;
+    border-bottom: 1rpx solid #ccc;
+    background: #fff;
+    padding: 0 40rpx;
+    .border{
+      border-bottom: 1rpx solid #ccc;
+    }
+    .info{
+      padding: 30rpx 0;
+      position: relative;
+      text{
+        font-size: 30rpx;
+        color: #505050;
+        display: inline-block;
+        line-height: 30rpx;
+      }
+      input{
+        position: absolute;
+        width: 500rpx;
+        left: 200rpx;
+        line-height: 30rpx;
+        height: 30rpx;
+        color: #505050;
+        display: block;
+        top: 20rpx;
+      }
+    }
+  }
+  .button{
+    margin: 100rpx auto 0 auto;
+  }
+  .next-right{
+    content: "";
+    position: absolute;
+    width: 24rpx;
+    height: 24rpx;
+    top: 50%;
+    right: 20rpx;
+    margin-top: -12rpx;
+    background: url('http://p5baddul2.bkt.clouddn.com/icon/next-right.png') center no-repeat;
+    background-size: 24rpx;
+  }
+}
+
+</style>

@@ -1,0 +1,87 @@
+<template>
+  <view class="modify">
+    <text class="ding" @tap="onOpenDing({{propertyStocks}})" :class="{'no': propertyStocks === 0}">订</text>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Panel extends wepy.component {
+  props = {
+    // sku
+    sku: String,
+    // 卖家id
+    sellerId: Number,
+    propertyStocks: ''
+  }
+  async onLoad() {
+  }
+  methods = {
+    onOpenDing(propertyStocks) {
+      console.log(this.propertyStocks)
+      if (propertyStocks === 0) {
+        return false
+      }
+      // this.$ding({
+      //   sku: this.sku,
+      //   sellerId: this.sellerId,
+      //   type: this.type
+      // })
+    }
+  }
+  }
+</script>
+<style lang="less">
+.modify {
+font-size: 28rpx;
+position: absolute;
+right: 70rpx;
+bottom: 30rpx;
+text-align: center;
+line-height: 48rpx;
+.ding {
+  width: 100rpx;
+  height: 48rpx;
+  background: #FF8113;
+  color: #fff;
+  &.no{
+    background: #ccc;
+  }
+}
+.ding-add-less {
+  height: 48rpx;
+  border: 1rpx solid #FF8113;/*no*/
+  background: #fff;
+  span {
+    display: block;
+    height: 48rpx;
+    float: left;
+  }
+  .less, .add {
+    width: 23px;
+    position: relative;
+  }
+  .less {
+    border-right: 1px solid #FF8113;
+    background: pink;
+    // background-size: 28rpx;
+    &.no{
+      background: yellow;
+      // background-size: 28rpx;
+    }
+  }
+  .change {
+    width: 84rpx;
+    overflow: hidden;
+  }
+  .add {
+    border-left: 1px solid $danger;
+    background: red;
+    // background-size: 14px;
+    &.no{
+      background: green;
+      // background-size: 14px;
+    }
+  }
+}
+}
+</style>

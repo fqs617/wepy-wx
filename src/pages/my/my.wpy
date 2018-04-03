@@ -42,7 +42,7 @@
         <text class="coupon-number">1张</text>
         <view class="next-right"></view>
       </view>
-      <view class="g-li" @tap="goCoupon">
+      <view class="g-li" @tap="goSet">
         <view class="coupon icon"></view>
         <text>设置</text>
         <text class="coupon-number">1张</text>
@@ -83,6 +83,11 @@
       goCoupon () {
         wx.navigateTo({
           url: './coupon/coupon.list'
+        })
+      },
+      goSet () {
+        wx.navigateTo({
+          url: '../set/set.my'
         })
       },
       async loginOut () {

@@ -32,7 +32,7 @@
     }
     async onLoad() {
       this.LoginService = new LoginService()
-      let isLoggedIn = !wx.getStorageSync('uid') || !wx.getStorageSync('token')
+      let isLoggedIn = !wx.getStorageSync('userInfo').uid || !wx.getStorageSync('userInfo').token
       if (!isLoggedIn) {
         this.$router.replace('/')
         return false

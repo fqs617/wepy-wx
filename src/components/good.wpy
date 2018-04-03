@@ -1,0 +1,73 @@
+<template>
+  <view class="item">
+    <view class="img" @tap="goodDetail({{info.sku}})">
+      <image src="{{ info.goodsImage }}"/>
+    </view>
+    <text class="text">{{ info.sku }}</text>
+    <text class="text">{{ info.goodsName }}</text>
+    <text class="text">{{ info.unit }}</text>
+    <text class="text">{{ info.spec }}</text>
+    <ding :sku="info.sku" :sellerId="info.storeList[0].sellerId"
+        :propertyStocks="info.storeList[0].propertyStocks"></ding>
+    </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import Ding from './ding'
+  export default class Panel extends wepy.component {
+    data = {
+    }
+    props = {
+      type: Object,
+      info: {}
+    }
+    components = {
+      // 引用组件
+      ding: Ding
+    }
+    async onLoad() {
+    }
+    methods = {
+      goodDetail (item) {
+        wx.navigateTo({
+          url: './detail?sku=' + item
+        })
+      },
+      plus () {
+        let count = wx.getStorageSync('userInfo')
+        console.log(count.cartGoodsCount)
+        // this.$emit('changeVal', num)
+      }
+    }
+    computed = {
+    }
+  }
+</script>
+<style lang="less">
+.item{
+  height: 220rpx;
+  width: 100%;
+  background: #fff;
+  margin-bottom: 10rpx;
+  border-bottom: 1px solid #e2e2e2;
+  border-top: 1px solid #e2e2e2;
+  padding: 40rpx 0 40rpx 10rpx;
+  position: relative;
+  .img{
+    position: absolute;
+    width: 160rpx;
+    height: 160rpx;
+    top: 20rpx;
+    left: 30rpx;
+    border: 1px solid #eee;
+    image{
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .text{
+    padding-left: 20rpx;
+    line-height: 40rpx;
+  }
+}
+</style>

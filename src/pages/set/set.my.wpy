@@ -1,0 +1,44 @@
+<template>
+  <view class="container my">
+    <view class="upload-com">
+      <upload :single="isSingle"></upload>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import MyService from '@/service/my.service'
+  import UpLoad from '../../components/upload'
+
+  export default class Login extends wepy.page {
+    config = {
+      navigationBarTitleText: '上传基本信息'
+    }
+    components = {
+      // 引用组件
+      upload: UpLoad
+    }
+    data = {
+      isSingle: 1
+    }
+    computed = {
+    }
+    async onLoad() {
+      this.MyService = new MyService()
+    }
+    methods = {
+    }
+  }
+</script>
+<style lang="less">
+.my{
+  .upload-com{
+    padding: 30rpx;
+    overflow: hidden;
+    .upload{
+      float: left;
+      margin-right: 30rpx;
+    }
+  }
+}
+</style>

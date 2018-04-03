@@ -17,10 +17,13 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/home/home',
+      'pages/home/detail',
       'pages/my/my',
+      'pages/my/my.info',
       'pages/index',
       'pages/login/login',
-      'pages/set/forget.pwd'
+      'pages/set/forget.pwd',
+      'pages/set/set.my'
     ],
     window: {
       backgroundTextStyle: 'light',

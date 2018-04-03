@@ -11,37 +11,26 @@
       </view>
     </view>
     <view class="mo">
-      <view class="li" @tap="goNotice">
-        <view class="image"><image src="../../image/index/notice.png"/></view>
+      <!-- <view class="li" @tap="goNotice">
+        <view class="image"><image class="imgs" src="../../image/index/notice.png"/></view>
         <text class="title">通知公告</text>
         <text class="info">停水停电通知</text>
-      </view>
-      <view class="li" @tap="goPay">
-        <view class="image"><image src="../../image/index/pay.png"/></view>
-        <text class="title">物业缴费</text>
-        <text class="info">微信支付在线缴费</text>
-      </view>
-      <view class="li" @tap="goRepair">
-        <view class="image"><image src="../../image/index/repair.png"/></view>
-        <text class="title">报事报修</text>
-        <text class="info">在线受理报事报修</text>
-      </view>
-      <view class="li" @tap="goAdvisory">
-        <view class="image"><image src="../../image/index/advisory.png"/></view>
-        <text class="title">在线咨询</text>
-        <text class="info">有什么话这里说</text>
-      </view>
-      <view class="li" @tap="goPhone">
-        <view class="image"><image src="../../image/index/phone.png"/></view>
-        <text class="title">物业电话</text>
-        <text class="info">一键拨通</text>
-      </view>
+      </view> -->
+      <scroll-view scroll-y bindscrolltolower="getMore" wx:if="{{goodlist.length > 0}}" bindscrolltoupper="refresh" class="scroll-view">
+        <repeat for="{{ goodlist }}" item="item" key="id">
+            <goodlist class="li" :info="item" @changeVal="changeVal"></goodlist>
+        </repeat>
+        <view class="is-all" wx:if="{{ isAll }}">
+          <text>加载完毕</text>
+        </view>
+      </scroll-view>
     </view>
   </view>
 </template>
 <script>
   import wepy from 'wepy'
   import HomeService from '@/service/home.service'
+  import GoodList from '../../components/good'
 
   export default class Index extends wepy.page {
     config = {
@@ -49,6 +38,7 @@
     }
     components = {
       // 引用组件
+      goodlist: GoodList
     }
     data = {
       info: {
@@ -57,53 +47,52 @@
         position: '',
         contactNumber: ''
       },
+      isAll: false,
       params: {
         page: 1,
-        pageSize: 20,
-        type: 5
-      }
+        pageSize: 20
+      },
+      list: {},
+      next: 0,
+      goodlist: []
     }
     computed = {
     }
     async onLoad() {
       this.homeService = new HomeService()
-      let res = await this.homeService.getCateList()
-      console.log(res)
+      this.$apply()
+      this.getList()
+    }
+    async getList () {
+      if (this.list.next === 0) return
+      let params = this.params
+      params.type = 1
+      params.client = 10
+      this.list = await this.homeService.getGoodList(params)
+      if (this.params.page === 1) {
+        this.goodlist = this.list.list
+      } else {
+        this.goodlist = this.goodlist.concat(this.list.list)
+      }
+      this.params.page = this.params.page + 1
+      if (this.list.next === 0) {
+        this.isAll = true
+      }
+      this.$apply()
     }
     methods = {
-      // 下拉刷新回调接口
-      onPullDownRefresh () {
-         // 我们用total和count来控制分页，total代表已请求数据的总数，count代表每次请求的个数。
-         // 刷新时需把total重置为0，代表重新从第一条请求。
-        let total = 0
-        console.log(11)
-        console.log(total)
-         // this.data.dataArray 是页面中绑定的数据源
-        // this.data.dataArray = []
-         // 网络请求，重新请求一遍数据
-        // this.periphery()
-         // 小程序提供的api，通知页面停止下拉刷新效果
-        wx.stopPullDownRefresh()
+      getMore () {
+        this.$apply()
+        this.getList()
       },
-      // 上拉加载回调接口
-      onReachBottom: function () {
-           // 我们用total和count来控制分页，total代表已请求数据的总数，count代表每次请求的个数。
-           // 上拉时需把total在原来的基础上加上count，代表从count条后的数据开始请求。
-        let count = 0
-        let total = 0
-        total += count
-        console.log(total)
-           // 网络请求
-        //  this.periphery()
+      refresh () {
+        this.$apply()
+        this.params.page = 1
+        this.getList()
       },
       selectCity () {
         wx.navigateTo({
-          url: './house/city.select'
-        })
-      },
-      goNotice () {
-        wx.navigateTo({
-          url: '../notice/notice'
+          url: '../my/my.info'
         })
       },
       goPay () {
@@ -111,20 +100,22 @@
           url: '../pay/pay'
         })
       },
-      goRepair () {
-        wx.navigateTo({
-          url: '../repair/repair'
-        })
-      },
-      goAdvisory () {
-        wx.navigateTo({
-          url: '../advisory/ad.index'
-        })
-      },
       goPhone () {
         wx.makePhoneCall({
           phoneNumber: this.info.contactNumber
         })
+      },
+      changeVal (...args) {
+        let $event = args[args.length - 1]
+        console.log(`${$event}`)
+        console.log('---111')
+      }
+    }
+    events = {
+      'changeVal': (...args) => {
+        console.log('---22')
+        let $event = args[args.length - 1]
+        console.log($event)
       }
     }
   }
@@ -191,11 +182,12 @@
     .li{
       width: 100%;
       float: left;
-      padding-left: 120rpx;
+      padding-left: 200rpx;
       position: relative;
-      height: 200rpx;
+      height: 220rpx;
       overflow: hidden;
       border-bottom: 1rpx solid #e1e1e1;
+      box-sizing: border-box;
       &:nth-child(odd){
         border-right: 1rpx solid #e1e1e1;
       }
@@ -208,10 +200,10 @@
         height: 60rpx;
         top: 70rpx;
         left: 30rpx;
-      }
-      image{
-        width: 60rpx;
-        height: 60rpx;
+        .imgs{
+          width: 60rpx;
+          height: 60rpx;
+        }
       }
       .title{
         font-size: 32rpx;
@@ -226,6 +218,15 @@
         color: #888;
         height: 34rpx;
         line-height: 34rpx;
+      }
+    }
+    .scroll-view{
+      height: 800rpx;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      .is-all{
+        width: 100%;
+        height: 100rpx;
       }
     }
   }

@@ -1,0 +1,133 @@
+<template>
+  <view wx:if="{{single !== 1}}">
+  <repeat for="{{ imageList }}" item="item" key="item" >
+    <view class="upload" @tap="upload({{index}})">
+      <view class="no-img" wx:if="{{ !item }}">
+      </view>
+      <view class="img" wx:if="{{ item }}">
+        <view class="delete" @tap.stop="deleteImg({{index}})"></view>
+        <image src="{{ item }}"/>
+      </view>
+    </view>
+  </repeat>
+  </view>
+  <view class="upload" @tap="upload()" wx:if="{{single === 1}}">
+    <view class="no-img" wx:if="{{ !imageList[0] }}">
+    </view>
+    <view class="img" wx:if="{{ imageList[0] }}">
+      <view class="delete" @tap.stop="deleteImg({{index}})"></view>
+      <image src="{{ imageList[0] }}"/>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  // import { API_HOST } from '../config/global.config'
+  const API_HOST = 'https://dev.api.bqshenghuo.bqmart.cn/bqshenghuo/api/'
+  export default class Upload extends wepy.component {
+    data = {
+      nowimageList: ['', '', '']
+    }
+    components = {
+    }
+    props = {
+      imageList: {
+        type: Object,
+        default: ['', '', '']
+      },
+      single: Number
+    }
+    watch = {
+      nowimageList (newValue, oldValue) {
+        let img = []
+        newValue.forEach(item => {
+          if (item) {
+            img.push(item)
+          }
+        })
+        this.$emit('uploadImg', img)
+      }
+    }
+    onShow () {
+      console.log('-----', this.imageList)
+    }
+    onLoad () {
+      this.nowimageList = this.imageList
+      this.$apply()
+    }
+    methods = {
+      deleteImg (index) {
+        let self = this
+        if (self.single === 1) {
+          this.nowimageList[0] = ''
+        } else {
+          this.nowimageList[index] = ''
+        }
+      },
+      upload (index) {
+        let self = this
+        wx.chooseImage({
+          success: function(res) {
+            let tempFilePaths = res.tempFilePaths
+            wx.uploadFile({
+              url: API_HOST + 'web/common/qiniuyun/img/upload',
+              filePath: tempFilePaths[0],
+              name: 'imgFile',
+              formData: {
+                'userId': 145240
+              },
+              success: function (res) {
+                let data = JSON.parse(res.data)
+                if (data.code === '0') {
+                  if (self.single === 1) {
+                    self.nowimageList[0] = data.data.url
+                  } else {
+                    self.nowimageList[index] = data.data.url
+                  }
+                  self.$apply()
+                }
+              },
+              fail: function (res) {
+                console.log('fail-----', res)
+              }
+            })
+          }
+        })
+      }
+    }
+  }
+</script>
+<style lang="less">
+.upload{
+  display: inline-block;
+  margin-right: 40rpx;
+  .no-img{
+    width: 120rpx;
+    height: 120rpx;
+    border-radius: 8rpx;
+    background: url('http://p5baddul2.bkt.clouddn.com/icon/tianjia.png') no-repeat center;
+    background-size: 120rpx;
+  }
+  .img{
+    width: 120rpx;
+    height: 120rpx;
+    border-radius: 8rpx;
+    border: 1rpx solid #f1f1f1;
+    position: relative;
+    .delete{
+      width: 40rpx;
+      height: 40rpx;
+      background: url('http://p5baddul2.bkt.clouddn.com/icon/delete.png') no-repeat center;
+      background-size: 40rpx;
+      position: absolute;
+      top: -20rpx;
+      right: -20rpx;
+    }
+    image{
+      width: 120rpx;
+      height: 120rpx;
+      border-radius: 8rpx;
+    }
+  }
+}
+</style>
