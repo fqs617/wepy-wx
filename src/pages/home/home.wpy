@@ -6,16 +6,16 @@
         <text class="info">{{ info.position }}</text>
       </view>
       <text class="note" wx:if="{{info.status !== 20}}">请选择您入驻的小区，以方便我们为您提供服务</text>
-      <view class="button1" @tap="selectCity" wx:if="{{info.status !== 20}}">
+      <view class="button1" @tap="selectHome" wx:if="{{info.status !== 20}}">
         入驻小区
       </view>
     </view>
     <view class="mo">
-      <!-- <view class="li" @tap="goNotice">
+      <view class="li" @tap="selectCity">
         <view class="image"><image class="imgs" src="../../image/index/notice.png"/></view>
         <text class="title">通知公告</text>
         <text class="info">停水停电通知</text>
-      </view> -->
+      </view>
       <scroll-view scroll-y bindscrolltolower="getMore" wx:if="{{goodlist.length > 0}}" bindscrolltoupper="refresh" class="scroll-view">
         <repeat for="{{ goodlist }}" item="item" key="id">
             <goodlist class="li" :info="item" @changeVal="changeVal"></goodlist>
@@ -90,14 +90,14 @@
         this.params.page = 1
         this.getList()
       },
-      selectCity () {
+      selectHome () {
         wx.navigateTo({
           url: '../my/my.info'
         })
       },
-      goPay () {
+      selectCity () {
         wx.navigateTo({
-          url: '../pay/pay'
+          url: './city.select'
         })
       },
       goPhone () {

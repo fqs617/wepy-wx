@@ -19,7 +19,7 @@
       upload: UpLoad
     }
     data = {
-      isSingle: 1
+      isSingle: 2
     }
     computed = {
     }

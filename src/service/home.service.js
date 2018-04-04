@@ -24,4 +24,21 @@ export default class homeService {
     params.client = 10
     return get('buyer/goods/detail', params, config)
   }
+  /**
+   * 城市列表查询
+   * @param {*}
+   * @return
+   */
+  getCityList(params = {}) {
+    return get('web/common/community/city/list', params)
+  }
+  /**
+   * web端小区区域列表查询
+   * @param {*} cityId [是] 城市ID
+   * @param {*} baiduCityId [否] 百度的城市ID
+   * @return
+   */
+  getDistrictist(params = {}) {
+    return get('web/common/community/district/list', params)
+  }
 }

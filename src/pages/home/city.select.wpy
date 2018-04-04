@@ -1,0 +1,83 @@
+<template>
+  <view class="container select-city">
+    <repeat for="{{ city }}" item="city" key="cityId">
+      <view class="zimu">
+        {{ city.firstLetter }}
+      </view>
+      <view class="city">
+        <repeat for="{{ city.cityInfo }}" item="item" key="cityId">
+          <view class="name" @tap="selectRegion({{item}})">
+            {{ item.cityName }}
+            <view class="next-right"></view>
+          </view>
+        </repeat>
+      </view>
+    </repeat>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import HomeService from '@/service/home.service'
+  export default class CitySelect extends wepy.page {
+    config = {
+      navigationBarTitleText: '选择城市'
+    }
+    components = {
+      // 引用组件
+    }
+    data = {
+      city: []
+    }
+    computed = {
+    }
+    methods = {
+      selectRegion(item) {
+        console.log(item)
+        wx.setStorageSync('selectAddress', {cityName: item.cityName})
+        wx.navigateTo({
+          url: './region.select?id=' + item.cityId + '&code=' + item.baiduCityId + '&name=' + item.cityName
+        })
+      }
+    }
+    onLoad() {
+      this.HomeService = new HomeService()
+      this.HomeService.getCityList().then(res => {
+        this.city = res
+        this.$apply()
+      })
+    }
+  }
+</script>
+<style lang="less">
+.select-city{
+  height: 100%;
+  background: #fff;
+  .zimu{
+    width: 100%;
+    padding: 0 30rpx;
+    line-height: 60rpx;
+    font-size: 28rpx;
+    color: #333;
+    line-height: 60rpx;
+    background: #f5f5f5;
+  }
+  .city{
+    width: 100%;
+    padding: 0 30rpx;
+    background: #fff;
+  }
+  .name{
+    width: 100%;
+    font-size: 30rpx;
+    color: #333;
+    border-bottom: 1rpx solid #ccc;
+    height: 90rpx;
+    line-height: 90rpx;
+    position: relative;
+    &:last-child{
+      border-bottom: none;
+    }
+  }
+}
+
+</style>

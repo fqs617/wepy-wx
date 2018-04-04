@@ -18,6 +18,8 @@ export default class extends wepy.app {
     pages: [
       'pages/home/home',
       'pages/home/detail',
+      'pages/home/city.select',
+      'pages/home/region.select',
       'pages/my/my',
       'pages/my/my.info',
       'pages/index',
